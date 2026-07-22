@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Lab #3, Exercise 3 - Artist Portfolio</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #e3f2fd;
+      padding: 24px;
+    }
+    #artist-list {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .artist-card {
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+      padding: 16px;
+    }
+    .artist-name {
+      margin: 0 0 12px;
+    }
+    .portfolio-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .card {
+      padding: 10px;
+      background: #f5f5f5;
+      border-radius: 8px;
+      width: 220px;
+    }
+    .card-img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: #ddd;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1.1em;
+      padding: 8px 0 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Exercise 3: Artist Portfolio Cards</h1>
+
+  <template id="artist-template">
+    <div class="artist-card">
+      <h2 class="artist-name"></h2>
+      <div class="portfolio-list"></div>
+    </div>
+  </template>
+
+  <template id="portfolio-item-template">
+    <div class="card">
+      <img class="card-img" alt="" />
+      <div class="card-title"></div>
+    </div>
+  </template>
+
+  <div id="artist-list"></div>
+
+  <script>
+    function addPortfolioItem(container, item) {
+      const template = document
+        .getElementById('portfolio-item-template')
+        .content.cloneNode(true);
+
+      const img = template.querySelector('.card-img');
+      img.src = item.url;
+      img.alt = item.title;
+      template.querySelector('.card-title').innerText = item.title;
+
+      container.appendChild(template);
+    }
+
+    function addArtist(artist) {
+      const template = document
+        .getElementById('artist-template')
+        .content.cloneNode(true);
+
+      template.querySelector('.artist-name').innerText = artist.name;
+      const portfolioContainer = template.querySelector('.portfolio-list');
+      artist.portfolio.forEach((item) =>
+        addPortfolioItem(portfolioContainer, item)
+      );
+
+      document.querySelector('#artist-list').appendChild(template);
+    }
+
+    const artist = {
+      name: 'Van Gogh',
+      portfolio: [
+        {
+          title: 'portrait',
+          url: 'https://collectionapi.metmuseum.org/api/collection/v1/iiif/436532/1671316/main-image',
+        },
+        {
+          title: 'sky',
+          url: 'https://mymodernmet.com/wp/wp-content/uploads/2020/11/White-house-night-van-gogh-worldwide-2.jpg',
+        },
+      ],
+    };
+
+    addArtist(artist);
+
+    // Extension: an array of artists, each with their own portfolio
+    const artists = [
+      artist,
+      {
+        name: 'Claude Monet',
+        portfolio: [
+          {
+            title: 'Water Lilies',
+            url: 'https://upload.wikimedia.org/wikipedia/commons/e/e0/Claude_Monet_038.jpg',
+          },
+          {
+            title: 'Impression, Sunrise',
+            url: 'https://upload.wikimedia.org/wikipedia/commons/5/5c/Monet_-_Impression%2C_Sunrise.jpg',
+          },
+        ],
+      },
+      {
+        name: 'Frida Kahlo',
+        portfolio: [
+          {
+            title: 'Self-Portrait',
+            url: 'https://upload.wikimedia.org/wikipedia/commons/e/e5/Frida_Kahlo_%28self_portrait%29.jpg',
+          },
+        ],
+      },
+    ];
+
+    // Uncomment to render the full array of artists instead of the single one above:
+    // artists.forEach(addArtist);
+  </script>
+</body>
+</html>

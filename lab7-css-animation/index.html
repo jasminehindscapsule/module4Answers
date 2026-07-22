@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Lab #7 - CSS Animation</title>
+  <style>
+    body {
+      background: #eee;
+    }
+    .track {
+      position: relative;
+      width: 100px;
+      height: 300px;
+      margin: 40px auto;
+      border: 2px dashed #999;
+    }
+    .square {
+      position: absolute;
+      left: 0;
+      width: 100px;
+      height: 100px;
+      animation-name: slide-and-recolour;
+      animation-duration: 3s;
+      animation-iteration-count: infinite;
+      animation-timing-function: ease-in-out;
+    }
+
+    @keyframes slide-and-recolour {
+      0% {
+        top: 0;
+        background-color: #e53935; /* red */
+      }
+      50% {
+        top: 200px; /* slides down to the bottom of the track */
+        background-color: #1e88e5; /* blue */
+      }
+      100% {
+        top: 0; /* returns to its original position */
+        background-color: #e53935; /* back to red */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="track">
+    <div class="square"></div>
+  </div>
+</body>
+</html>

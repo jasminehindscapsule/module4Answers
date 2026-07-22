@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Lab #10 - Fake E-Commerce Website</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+    integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9"
+    crossorigin="anonymous"
+  />
+  <script src="https://code.iconify.design/iconify-icon/2.3.0/iconify-icon.min.js"></script>
+  <style>
+    .card-img-top {
+      height: 180px;
+      object-fit: contain;
+      padding: 16px;
+      background: white;
+    }
+    .category-icon {
+      font-size: 1.3em;
+      vertical-align: middle;
+    }
+  </style>
+</head>
+<body>
+  <div class="container py-4">
+    <h1 class="mb-4">Fake Store</h1>
+
+    <div class="row g-2 mb-4">
+      <div class="col-12 col-md-4">
+        <label for="category-select" class="form-label">Category</label>
+        <select id="category-select" class="form-select">
+          <option value="all">All categories</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="search-input" class="form-label">Search</label>
+        <input type="text" id="search-input" class="form-control" placeholder="Search by title..." />
+      </div>
+      <div class="col-12 col-md-4">
+        <label for="sort-select" class="form-label">Sort by</label>
+        <select id="sort-select" class="form-select">
+          <option value="none">Default</option>
+          <option value="price-asc">Price: Low to High</option>
+          <option value="price-desc">Price: High to Low</option>
+          <option value="title-asc">Title: A to Z</option>
+          <option value="title-desc">Title: Z to A</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="row g-4" id="product-grid"></div>
+  </div>
+
+  <template id="product-card-template">
+    <div class="col-12 col-md-6 col-lg-3 product-col">
+      <div class="card h-100">
+        <img class="card-img-top" src="" alt="" />
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">
+            <iconify-icon class="category-icon"></iconify-icon>
+            <span class="card-title-text"></span>
+          </h5>
+          <p class="card-text small text-muted flex-grow-1"></p>
+          <p class="card-text fw-bold price"></p>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    const CATEGORY_ICONS = {
+      electronics: 'mdi:laptop',
+      jewelery: 'mdi:diamond-stone',
+      "men's clothing": 'mdi:tshirt-crew',
+      "women's clothing": 'mdi:hanger',
+    };
+
+    function getCategoryIcon(category) {
+      return CATEGORY_ICONS[category] || 'mdi:tag';
+    }
+
+    let allProducts = [];
+
+    function renderProducts(products) {
+      const grid = document.getElementById('product-grid');
+      grid.innerHTML = '';
+
+      products.forEach((product) => {
+        const card = document
+          .getElementById('product-card-template')
+          .content.cloneNode(true);
+
+        const img = card.querySelector('.card-img-top');
+        img.src = product.image;
+        img.alt = product.title;
+
+        card.querySelector('.category-icon').setAttribute('icon', getCategoryIcon(product.category));
+        card.querySelector('.card-title-text').innerText = product.title;
+        card.querySelector('.card-text.small').innerText = product.description;
+        card.querySelector('.price').innerText = `$${product.price.toFixed(2)}`;
+
+        grid.appendChild(card);
+      });
+    }
+
+    function applyFiltersAndSort() {
+      const category = document.getElementById('category-select').value;
+      const search = document.getElementById('search-input').value.toLowerCase();
+      const sort = document.getElementById('sort-select').value;
+
+      let filtered = allProducts.filter((p) => {
+        const matchesCategory = category === 'all' || p.category === category;
+        const matchesSearch = p.title.toLowerCase().includes(search);
+        return matchesCategory && matchesSearch;
+      });
+
+      switch (sort) {
+        case 'price-asc':
+          filtered = [...filtered].sort((a, b) => a.price - b.price);
+          break;
+        case 'price-desc':
+          filtered = [...filtered].sort((a, b) => b.price - a.price);
+          break;
+        case 'title-asc':
+          filtered = [...filtered].sort((a, b) => a.title.localeCompare(b.title));
+          break;
+        case 'title-desc':
+          filtered = [...filtered].sort((a, b) => b.title.localeCompare(a.title));
+          break;
+      }
+
+      renderProducts(filtered);
+    }
+
+    function populateCategoryDropdown(products) {
+      const select = document.getElementById('category-select');
+      const categories = [...new Set(products.map((p) => p.category))];
+
+      categories.forEach((category) => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        select.appendChild(option);
+      });
+    }
+
+    fetch('https://fakestoreapi.com/products')
+      .then((response) => response.json())
+      .then((products) => {
+        allProducts = products;
+        populateCategoryDropdown(products);
+        renderProducts(products);
+      })
+      .catch((error) => console.error('Failed to load products:', error));
+
+    document.getElementById('category-select').addEventListener('change', applyFiltersAndSort);
+    document.getElementById('search-input').addEventListener('input', applyFiltersAndSort);
+    document.getElementById('sort-select').addEventListener('change', applyFiltersAndSort);
+  </script>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm"
+    crossorigin="anonymous"
+  ></script>
+</body>
+</html>

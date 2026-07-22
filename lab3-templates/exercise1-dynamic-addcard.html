@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Lab #3, Exercise 1 - Dynamic addCard</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #e3f2fd;
+      padding: 24px;
+    }
+    #card-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+    .card {
+      padding: 10px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+      width: 220px;
+    }
+    .card-title {
+      font-weight: 600;
+      font-size: 1.5em;
+      padding: 0 0 10px 0;
+    }
+    .card-text {
+      font-weight: 400;
+      font-size: 1em;
+    }
+  </style>
+</head>
+<body>
+  <h1>Exercise 1: Dynamic Card Content</h1>
+
+  <template id="card-template">
+    <div class="card">
+      <div class="card-body">
+        <div class="card-title"></div>
+        <div class="card-text"></div>
+      </div>
+    </div>
+  </template>
+
+  <div id="card-list"></div>
+
+  <script>
+    // addCard now accepts title and text params instead of hardcoding content
+    function addCard(title, text) {
+      const template = document
+        .getElementById('card-template')
+        .content.cloneNode(true);
+
+      template.querySelector('.card-title').innerText = title;
+      template.querySelector('.card-text').innerText = text;
+
+      document.querySelector('#card-list').appendChild(template);
+    }
+
+    addCard('My Card Title', 'lorem ipsum ble bla');
+    addCard('Second Card', 'This content was passed in dynamically!');
+    addCard('Third Card', 'addCard(title, text) now works for any content');
+  </script>
+</body>
+</html>

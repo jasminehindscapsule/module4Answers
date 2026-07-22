@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Lab #5 - Manage Data</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #e3f2fd;
+      padding: 24px;
+    }
+    #news-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .news-item {
+      background: white;
+      border-radius: 8px;
+      padding: 12px 16px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    }
+    .news-item h3 {
+      margin: 0 0 4px;
+      font-size: 1.1em;
+    }
+    .news-item p {
+      margin: 0;
+      color: #444;
+    }
+    form {
+      background: white;
+      border-radius: 8px;
+      padding: 16px;
+      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    input,
+    textarea {
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font: inherit;
+    }
+    button {
+      padding: 8px;
+      border: none;
+      border-radius: 6px;
+      background: #1976d2;
+      color: white;
+      cursor: pointer;
+    }
+    #stop-btn {
+      background: #b0bec5;
+      color: #263238;
+    }
+  </style>
+</head>
+<body>
+  <h1>News</h1>
+  <div id="news-list"></div>
+
+  <h2>Add News Item</h2>
+  <!-- Approach #2 from the slide: plain inputs + onclick, no <form> tag, so there's no
+       page-reload risk from a submit event to prevent in the first place. -->
+  <div>
+    <input type="text" id="news-title" placeholder="Title" />
+    <textarea id="news-content" placeholder="Content"></textarea>
+    <button type="button" id="add-news-btn">Add News</button>
+  </div>
+
+  <p>
+    <button type="button" id="stop-btn">Stop auto-refresh</button>
+  </p>
+
+  <script>
+    let news = [
+      {
+        id: 1,
+        title: 'Election Results',
+        content: 'Newly elected minister...',
+      },
+      {
+        id: 2,
+        title: 'Sporting Success',
+        content: 'World Cup winners...',
+      },
+      {
+        id: 3,
+        title: 'Tornado Warning',
+        content: 'Residents should prepare...',
+      },
+    ];
+
+    function renderNews() {
+      const container = document.getElementById('news-list');
+      container.innerHTML = '';
+
+      news.forEach((item) => {
+        const el = document.createElement('div');
+        el.className = 'news-item';
+        el.innerHTML = `<h3>${item.title}</h3><p>${item.content}</p>`;
+        container.appendChild(el);
+      });
+    }
+
+    // initial render when the page loads
+    renderNews();
+
+    // re-read the array and re-render every 5 seconds, so the page stays in sync
+    const refreshInterval = setInterval(renderNews, 5000);
+
+    document.getElementById('add-news-btn').addEventListener('click', () => {
+      const titleInput = document.getElementById('news-title');
+      const contentInput = document.getElementById('news-content');
+
+      if (!titleInput.value.trim()) return;
+
+      news.push({
+        id: news.length ? Math.max(...news.map((n) => n.id)) + 1 : 1,
+        title: titleInput.value,
+        content: contentInput.value,
+      });
+
+      titleInput.value = '';
+      contentInput.value = '';
+    });
+
+    document.getElementById('stop-btn').addEventListener('click', () => {
+      clearInterval(refreshInterval);
+    });
+  </script>
+</body>
+</html>

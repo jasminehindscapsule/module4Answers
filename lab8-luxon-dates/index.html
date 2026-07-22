@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Lab #8 - Luxon Dates</title>
+  <script src="https://cdn.jsdelivr.net/npm/luxon@3.5.0/build/global/luxon.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      padding: 24px;
+      line-height: 1.8;
+    }
+  </style>
+</head>
+<body>
+  <h1>Luxon Dates</h1>
+  <div id="output"></div>
+
+  <script>
+    const { DateTime } = luxon;
+    const output = document.getElementById('output');
+
+    function print(html) {
+      output.innerHTML += `<p>${html}</p>`;
+    }
+
+    const birthdate = DateTime.fromISO('2002-04-02');
+    const now = DateTime.now();
+
+    // 1) Number of days between birthdate and current date
+    const daysSinceBirth = Math.floor(now.diff(birthdate, 'days').days);
+    print(`1) Days since birth: ${daysSinceBirth}`);
+
+    // 2) Years, months, and days between birthdate and current date
+    const age = now.diff(birthdate, ['years', 'months', 'days']).toObject();
+    print(
+      `2) Age: ${Math.floor(age.years)} years, ${Math.floor(age.months)} months, and ${Math.floor(age.days)} days`
+    );
+
+    // 3) Given two dates, display the date closest to the current date
+    const dateA = DateTime.fromISO('2026-05-01');
+    const dateB = DateTime.fromISO('2026-09-01');
+    const closest =
+      Math.abs(now.diff(dateA).as('milliseconds')) <
+      Math.abs(now.diff(dateB).as('milliseconds'))
+        ? dateA
+        : dateB;
+    print(
+      `3) Closest date to now (between ${dateA.toISODate()} and ${dateB.toISODate()}): ${closest.toISODate()}`
+    );
+
+    // 4) Given two dates, display whether the first date is before or after the second
+    const relation = dateA < dateB ? 'before' : dateA > dateB ? 'after' : 'the same as';
+    print(`4) ${dateA.toISODate()} is ${relation} ${dateB.toISODate()}`);
+
+    // 5) Current time in London
+    const londonTime = now.setZone('Europe/London').toLocaleString(DateTime.DATETIME_FULL);
+    print(`5) Current time in London: ${londonTime}`);
+  </script>
+</body>
+</html>

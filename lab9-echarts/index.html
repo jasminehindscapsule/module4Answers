@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lab #9 - eCharts</title>
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.1/dist/echarts.min.js"></script>
+</head>
+<body>
+  <h1>Fake Store - Items per Category</h1>
+  <div id="main" style="width: 900px; height: 600px;"></div>
+
+  <script type="text/javascript">
+    const options = {
+      title: { text: 'Fake Store Categories' },
+      xAxis: {
+        data: [],
+      },
+      yAxis: {},
+      series: [
+        {
+          name: '# products',
+          type: 'bar',
+          data: [],
+        },
+      ],
+    };
+
+    fetch('https://fakestoreapi.com/products')
+      .then((response) => response.json())
+      .then((products) => {
+        // count how many products fall under each category
+        const counts = products.reduce((acc, product) => {
+          acc[product.category] = (acc[product.category] || 0) + 1;
+          return acc;
+        }, {});
+
+        // use the counted categories/values to set the chart's option data
+        options.xAxis.data = Object.keys(counts);
+        options.series[0].data = Object.values(counts);
+      })
+      .then(() => {
+        // Display the chart
+        myChart.setOption(options);
+      });
+
+    // Initialize the echarts instance based on the prepared div
+    let myChart = echarts.init(document.getElementById('main'));
+  </script>
+</body>
+</html>
